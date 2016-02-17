@@ -19034,20 +19034,21 @@ module.exports = require('./lib/React');
 var React = require('react');
 var ListItem = require('./ListItem.jsx');
 
-var ingredients = [{ "id": 1, "text": "ham" }, { "id": 2, "text": "cheese" }, { "id": 3, "text": "potatoes" }];
-
 var List = React.createClass({
   displayName: 'List',
 
+
   render: function () {
-    var ListItems = ingredients.map(function (item) {
-      return React.createElement(ListItem, { key: item.id, ingredient: item.text });
-    });
+
+    var createItem = function (text, index) {
+      return React.createElement(ListItem, { key: index + text, text: text });
+      //key and text are the properties of ListItem
+    };
 
     return React.createElement(
       'ul',
       null,
-      ListItems
+      this.props.items.map(createItem)
     );
   }
 });
@@ -19056,6 +19057,7 @@ module.exports = List;
 
 },{"./ListItem.jsx":160,"react":158}],160:[function(require,module,exports){
 var React = require('react');
+
 var ListItem = React.createClass({
   displayName: 'ListItem',
 
@@ -19066,9 +19068,10 @@ var ListItem = React.createClass({
       React.createElement(
         'h4',
         null,
-        this.props.ingredient
+        this.props.text
       )
     );
+    // js: grab the data in the property called text from this object
   }
 });
 
@@ -19076,9 +19079,62 @@ module.exports = ListItem;
 
 },{"react":158}],161:[function(require,module,exports){
 var React = require('react');
+var List = require('./List.jsx');
+
+var ListManager = React.createClass({
+  displayName: 'ListManager',
+
+  getInitialState: function () {
+    return { items: [], newItemText: '' };
+  },
+  onChange: function (e) {
+    this.setState({ newItemText: e.target.value });
+  },
+  handleSubmit: function (e) {
+    e.preventDefault();
+
+    var currentItems = this.state.items;
+    //this.state is for data that can change !
+    //this.props is read only
+
+    currentItems.push(this.state.newItemText);
+
+    this.setState({ items: currentItems, newItemText: '' });
+    //set the state with the current item and reset the text field
+  },
+  render: function () {
+    return React.createElement(
+      'div',
+      null,
+      React.createElement(
+        'h3',
+        null,
+        this.props.title
+      ),
+      React.createElement(
+        'form',
+        { onSubmit: this.handleSubmit },
+        React.createElement('input', { onChange: this.onChange, value: this.state.newItemText }),
+        React.createElement(
+          'button',
+          null,
+          'Add'
+        )
+      ),
+      React.createElement(List, { items: this.state.items })
+    );
+    //items property called in List class
+  }
+});
+
+module.exports = ListManager;
+
+},{"./List.jsx":159,"react":158}],162:[function(require,module,exports){
+var React = require('react');
 var ReactDOM = require('react-dom');
-var List = require('./components/List.jsx');
+var ListManager = require('./components/ListManager.jsx');
 
-ReactDOM.render(React.createElement(List, null), document.getElementById('ingredients'));
+ReactDOM.render(React.createElement(ListManager, { title: 'ingredients' }), document.getElementById('ingredients'));
+//title is a property
 
-},{"./components/List.jsx":159,"react":158,"react-dom":2}]},{},[161]);
+},{"./components/ListManager.jsx":161,"react":158,"react-dom":2}]},{},[162]);
