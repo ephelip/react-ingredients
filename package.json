@@ -1,7 +1,7 @@
 {
-  "name": "react-skeleton",
+  "name": "react-ingredients",
   "version": "1.0.0",
-  "description": "A skeleton for react app",
+  "description": "A react app to manage ingredients",
   "main": "index.js",
   "scripts": {
     "start": "watchify src/main.jsx -v -t [ babelify --presets [ react ] ] -o public/js/main.js",
